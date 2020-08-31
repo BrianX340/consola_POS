@@ -1,14 +1,17 @@
 import os
 import sqlite3
 from classes import *
-clear_ = os.system ("cls")
+import time
 
 ventaDiaria = 0
 fiadoDiario = 0
-art = {}
 fiado = {}
-clientes = {}
 total = 0
+
+def exitt(a):
+    fecha = [time.localtime()[2], time.localtime()[1], time.localtime()[0]]
+    a = False
+    return a
 
 def articleSave(name,price,code):
     conexion = sqlite3.connect("shop.db")
@@ -53,10 +56,16 @@ def crear_bd():
     cursor = conexion.cursor()
     try:
         cursor.execute('''
+            CREATE TABLE fecha(
+            fecha INTEGER UNIQUE NOT NULL,
+            monto INTEGER)''')
+
+        cursor.execute('''
             CREATE TABLE articulos(
             article VARCHAR(100) UNIQUE NOT NULL,
             price VARCHAR(100) NOT NULL,
             code VARCHAR(100) NOT NULL)''')
+
         cursor.execute('''
             CREATE TABLE clientes(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -67,28 +76,24 @@ def crear_bd():
     except sqlite3.OperationalError:
         print("Ya existe la tabla")
     else:
-        print("La tabla usuarios se ha creado")
+        print("Las tablas se han creado con exito.")
 
 
-def incorrecta():
-    return clear_
 
 def caja():
-    global clear_
     global ventaDiaria
     global fiadoDiario
     global total
     suma = add_art()
-    clear_
+    os.system('cls')
 
 def add_art():
     global fiadoDiario
     global ventaDiaria
     global total
-    global clear_
     active = True
     while active:
-        clear_
+        os.system('cls')
         articulo = input( "\nEscanee un codigo / x para salir: " )
         if articulo == "x" or articulo == "X":
             active = False
@@ -119,11 +124,11 @@ def add_art():
 
 
         if multi == "1":
-            print(f"\nTotal de la cuenta es: {total}")
+            print(f"\nTotal de la cuenta es: ${total}")
 
-            paga = input("\n¿Cuanto paga?")
+            paga = input("\n¿Cuanto paga?\n--> $")
 
-            print(f"\nEl vuelto es: {int(paga) - total}")
+            print(f"\nEl vuelto es: ${int(paga) - total}")
 
             finalizado = input("""\nEl llevo los articulos?
 
@@ -132,7 +137,7 @@ def add_art():
 
             -->""")
 
-            clear_
+            os.system('cls')
 
             if finalizado == "1":
                 ventaDiaria += total
@@ -140,18 +145,18 @@ def add_art():
             else:
                 print("Venta Anulada!")
                 input("Presiones una tecla para continuar...")
-                clear_
+                os.system('cls')
                 break
         elif multi == "2":
             cliente = int(input("\nIngrese numero de cliente: "))
             clientes[cliente].agregar(total)
-            clear_
-            print(f"\nSe ha fiado\n\nCliente: {clientes[cliente].name}\n\n DNI: {clientes[cliente].dni} \n\nTotal: {total}")
+            os.system('cls')
+            print(f"\nSe ha fiado\n\nCliente: {clientes[cliente].name}\n\n DNI: {clientes[cliente].dni} \n\nTotal: ${total}")
             fiadoDiario += total
             input("\nPulse una tecla para finalizar... ")
             break
         elif multi == "3":
-            restar = input("Cuanto desea descontar?\n\n->")
+            restar = input("Cuanto desea descontar?\n\n-> $")
             total -= int(restar)
         elif multi == "4":
             add_art(total)
@@ -160,13 +165,13 @@ def add_art():
             break
 
 def cargar_articulos():
-    global clear_
     activo = True
+    os.system('cls')
     while activo:
         op = "x"
         op2 = "X"
 
-        clear_
+        os.system('cls')
         print("Presione X para salir...")
         name = input("\nIngrese el nombre del articulo: ")
         if name == op or name == op2:
@@ -176,7 +181,7 @@ def cargar_articulos():
         if codigo == op or codigo == op2:
             break
 
-        precio = input(f"\nIngrese el precio del articulo {name}: ")
+        precio = input(f"\nIngrese el precio del articulo {name}:\n$")
         if precio == op or precio == op2:
             break
         try:
@@ -199,7 +204,7 @@ def cargar_articulos():
         except ValueError:
             print("Codigo de articulo o precio incorrectos..")
 
-    clear_
+    os.system('cls')
 
 
 
@@ -214,22 +219,23 @@ def view_article(code):
     if b:
         print(f"""
                     Nombre: {b[0]}
-                    Precio: {b[1]}
+                    Precio: ${b[1]}
                     Codigo: {b[2]}
                     """)
         #return wx.MessageDialog(self,message='You has been Login!',caption='Loged User').ShowModal()
     else:
-        pass
+        print("El articulo no existe!\nPresione una tecla para continuar, X para salir")  
+        a = input()
+        if a.lower() == "x":
+            return "x"
         #return wx.MessageDialog(self,message='Invalid Account!',caption='Login Error').ShowModal()
 
     conexion.close()
 
 
 def consultar_articulos():
-    global clear_
     active = True
     while active:
-        clear_
         print("Presione X para salir...")
         articulo = input("\nIngrese el codigo de barras: ")
         if articulo == "x":
@@ -240,17 +246,20 @@ def consultar_articulos():
             try:
                 code = int(articulo)
                 try:
-                    view_article(code)
+                    os.system('cls')
+                    a = view_article(code)
+                    a
+                    if a.lower() == "x":
+                        break
                 except:
-                    print("El articulo no existe!")       
+                    pass
             except ValueError:
                 print("Codigo erroneo!")
 
 def add_client():
-    global clear_
     active = True
     while active:
-        clear_
+        os.system('cls')
         print("Para cancelar presione X\n")
         name = input("\nIngrese el nombre del cliente: ")
         dni = input(f"\nIngrese el DNI de {name}: ")
@@ -259,16 +268,16 @@ def add_client():
             try:
                 userSave(name,dni)
                 input("Presiones una tecla para continuar...")
-                clear_
+                os.system('cls')
             except:
                 print("Error al crear el cliente codigo de error: 0x01")
                 #este error no puede pasar nunca xD
         except:
             print("Error dni incorrecto.")
-            clear_
+            os.system('cls')
             pass
         break
-    clear_
+    os.system('cls')
 
 
 def consulta_cliente(dni):
@@ -281,8 +290,9 @@ def consulta_cliente(dni):
         print(f"""
                     Nombre: {b[1]}
                     DNI: {b[2]}
-                    Cuenta: {b[3]}
+                    Cuenta: ${b[3]}
                     """)
+        input("\nPresione una tecla para continuar...")
         #return wx.MessageDialog(self,message='You has been Login!',caption='Loged User').ShowModal()
     else:
         pass
@@ -292,7 +302,6 @@ def consulta_cliente(dni):
 
 
 def view_client():
-    global clear_
     active = True
 
     while active:
@@ -310,20 +319,20 @@ def view_client():
                 except:
                     print("\nCliente inexistente!\nPresiones una tecla para continuar...")
                     input()
-                    clear_
+                    os.system('cls')
             except:
                 print("Numero de DNI incorrecto!\nPresiones una tecla para continuar... ")
                 input()
-                clear_
+                os.system('cls')
 
     
     
 
     
 def cliente_more():
-    global clear_
     active = True
     while active:
+        os.system('cls')
         print("Presione X para volver al menu principal")
 
         cliente = input("Ingrese el DNI del cliente: ")
@@ -348,7 +357,7 @@ def cliente_more():
                     a = cursor.execute("select * from clientes where dni=:dni", {"dni": dni})
                     b = cursor.fetchone()
                     cuenta = int(b[3]) + suma
-                    cursor.execute(f"UPDATE clientes SET cuenta = {cuenta} WHERE dni = {dni}")
+                    cursor.execute(f"UPDATE clientes SET cuenta = ${cuenta} WHERE dni = {dni}")
                     #cursor.execute("UPDATE clientes SET cuenta=cuenta WHERE dni=dni", {"cuenta": cuenta, "dni": dni})
 
                     conexion.commit()
@@ -356,9 +365,10 @@ def cliente_more():
                     consulta_cliente(dni)
                     break
                 elif opcion =="2":
+                    os.system('cls')
                     print("Adicion anulada...")
                     input("Presiones una tecla para continuar...")
-                    clear_
+                    os.system('cls')
                 else:
                     print("Opcion incorrecta!")
             except:
@@ -368,7 +378,7 @@ def cliente_more():
 
 
 def client_pay():
-    global clear_
+    os.system('cls')
     active = True
     while active:
         print("Presione X para volver al menu principal")
@@ -394,7 +404,7 @@ def client_pay():
                     a = cursor.execute("select * from clientes where dni=:dni", {"dni": dni})
                     b = cursor.fetchone()
                     cuenta = int(b[3]) - resta
-                    cursor.execute(f"UPDATE clientes SET cuenta = {cuenta} WHERE dni = {dni}")
+                    cursor.execute(f"UPDATE clientes SET cuenta = ${cuenta} WHERE dni = {dni}")
 
                     conexion.commit()
                     conexion.close()
@@ -403,7 +413,7 @@ def client_pay():
                 elif opcion =="2":
                     print("Pago anulado...")
                     input("Presiones una tecla para continuar...")
-                    clear_
+                    os.system('cls')
                 else:
                     print("Opcion incorrecta!")
             except:

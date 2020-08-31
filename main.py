@@ -1,11 +1,13 @@
 from func import *
+import os
 
-crear_bd()
+
 
 
 a = True
+crear_bd()
 while a:
-    clear_
+    os.system('cls')
     menu = input("""
     Bienvenido, ingrese una opcion!
 
@@ -35,10 +37,12 @@ while a:
         client_pay()
     elif menu == "7":
         cliente_more()
+    elif menu == '8':
+        pass
         
         
     elif menu == "9":
-        a = False
+        a = exitt(a)
     else:
-        clear_
+        os.system('cls')
         print("Opcion incorrecta!")
