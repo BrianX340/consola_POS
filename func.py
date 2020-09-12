@@ -12,7 +12,6 @@ fiadoDiario = 0
 total = 0
 articulos = {}
 clientes = {}
-
 #Estamos tratando de meter segundos en base de datos y desp comparar para ver la fecha con pandas
 
 
